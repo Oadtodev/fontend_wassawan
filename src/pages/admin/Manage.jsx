@@ -6,7 +6,7 @@ const Manage = () => {
 
   const fetchTenants = async () => {
     try {
-      const response = await fetch("https://backend-wassawan.onrender.com/");
+      const response = await fetch("https://backend-wassawan.onrender.com");
       const data = await response.json();
       setTenants(data);
 
