@@ -56,7 +56,7 @@ const Header = () => {
         <div className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-slate-800`}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <a href="/" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700 hover:text-blue-500">Home</a>
-            <a href="/missions" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700 hover:text-blue-500">Missions</a>
+            <a href="/manage" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700 hover:text-blue-500">Manage</a>
             <a href="/gallery" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700 hover:text-blue-500">Gallery</a>
             <a href="/challenge" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700 hover:text-blue-500">News</a>
           </div>
