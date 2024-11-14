@@ -6,7 +6,7 @@ const Manage = () => {
 
   const fetchTenants = async () => {
     try {
-      const response = await fetch("http://localhost:5000/");
+      const response = await fetch("https://backend-wassawan.onrender.com/");
       const data = await response.json();
       setTenants(data);
 
@@ -26,7 +26,7 @@ const Manage = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/${id}`, {
+      const response = await fetch(`https://backend-wassawan.onrender.com/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
