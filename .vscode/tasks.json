@@ -6,7 +6,7 @@
         {
             "label": "put to github",
             "type": "shell",
-            "command": "git init &&git add . && git commit -m 'update to github' && git push origin main",
+            "command": "hello",
             "problemMatcher": []
         }
     ]
