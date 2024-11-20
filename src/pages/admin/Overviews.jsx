@@ -104,7 +104,7 @@ const Overviews = () => {
                 <h2 className="text-xl font-semibold mb-2">รายละเอียดผู้เช่า</h2>
                 <p>ชื่อ: {user ? user.name : "-"}</p>
                 <p>ห้อง: {user ? user.room : "-"}</p>
-                <p>ล่าสุด</p>
+                
               </div>
               <div>
                 <h2 className="text-xl font-semibold mb-2">เลขที่ใบเสร็จ</h2>
