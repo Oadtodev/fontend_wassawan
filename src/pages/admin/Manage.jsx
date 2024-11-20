@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+
 const Manage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tenants, setTenants] = useState([]);
 
   const fetchTenants = async () => {
     try {
-      const response = await fetch("https://backend-wassawan.onrender.com/");
+      const response = await fetch("http://localhost:5000");
       const data = await response.json();
       setTenants(data);
-
     } catch (error) {
       console.error("Error fetching tenants:", error);
     }
@@ -19,14 +19,9 @@ const Manage = () => {
     fetchTenants();
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`https://backend-wassawan.onrender.com/${id}`, {
+      const response = await fetch(`http://localhost:5000/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -37,8 +32,55 @@ const Manage = () => {
     }
   };
 
+  const handleEdit = (tenant) => {
+    Swal.fire({
+      title: 'แก้ไขข้อมูลผู้เช่า',
+      html: `
+        <input id="name" class="swal2-input" placeholder="ชื่อ-นามสกุล" value="${tenant.name}">
+        <input id="room" class="swal2-input" placeholder="เลขห้อง" type="number" value="${tenant.room}" disabled>
+        <input id="rent" class="swal2-input" placeholder="ค่าเช่า" type="number" value="${tenant.rent}">
+        <input id="tel" class="swal2-input" placeholder="เบอร์โทร" type="text" value="${tenant.tel}">
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึก',
+      cancelButtonText: 'ยกเลิก',
+      preConfirm: () => {
+        const name = document.getElementById('name').value;
+        const rent = document.getElementById('rent').value;
+        const tel = document.getElementById('tel').value;
+        if (!name || !rent || !tel) {
+          Swal.showValidationMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+          return false;
+        }
+        return { id: tenant._id, name, rent, tel };
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:5000/api/users/${result.value.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: result.value.name,
+            rent: result.value.rent,
+            tel: result.value.tel,
+          })
+        })
+        .then(response => response.json())
+        .then(() => {
+          Swal.fire('สำเร็จ!', 'ข้อมูลผู้เช่าได้รับการอัปเดตเรียบร้อยแล้ว', 'success');
+          fetchTenants();
+        })
+        .catch(() => {
+          Swal.fire('ผิดพลาด!', 'ไม่สามารถอัปเดตข้อมูลได้', 'error');
+        });
+      }
+    });
+  };
+
   return (
-    <div>
+    <>
       <div className="flex min-h-screen bg-slate-900 text-white relative">
         {/* Mobile Sidebar Toggle Button */}
         <button
@@ -64,55 +106,9 @@ const Manage = () => {
           </svg>
         </button>
 
-        {/* Left Sidebar */}
-        <div
-          className={`${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 fixed md:static z-10 w-64 bg-slate-800 p-4 h-screen transition-transform duration-300 ease-in-out`}
-        >
-          <h2 className="text-xl font-bold mb-4">Room Management</h2>
-          <nav className="space-y-2">
-            <a href="#" className="block px-4 py-2 rounded hover:bg-slate-700">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              Billing (วางบิล)
-            </a>
-            <a href="#" className="block px-4 py-2 rounded hover:bg-slate-700">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Report
-            </a>
-
-          </nav>
-
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-2">Quick Stats</h3>
-            <div className="space-y-2">
-              <div className="bg-slate-700 p-3 rounded">
-                <p className="text-sm">Occupied Rooms</p>
-                <p className="text-xl font-bold text-green-500">18/24</p>
-              </div>
-              <div className="bg-slate-700 p-3 rounded">
-                <p className="text-sm">Available Rooms</p>
-                <p className="text-xl font-bold text-blue-500">6</p>
-              </div>
-              <div className="bg-slate-700 p-3 rounded">
-                <p className="text-sm">Maintenance Required</p>
-                <p className="text-xl font-bold text-yellow-500">2</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Main Content */}
         <div className="flex-1 p-8">
           <h1 className="text-3xl font-bold mb-6">Room Overviews</h1>
-          <div className="flex justify-between items-center mb-4">
-
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Room Cards */}
             {[...Array(24)].map((_, index) => {
@@ -123,7 +119,7 @@ const Manage = () => {
                   className={`bg-slate-800 p-4 rounded-lg transition-all duration-300 ${
                     tenant
                       ? "border-2 border-green-500 shadow-[0_0_15px_rgba(0,255,0,0.5)]"
-                      : "border-2 border-red-500 shadow-[0_0_15px_rgba(255,0,0,0.5)]"
+                      : "border-2 border-red-500 shadow-[0_0_15px_rgba(255,0,0,0.5)] animate-pulse"
                   }`}
                 >
                   <div className="flex justify-between items-center mb-2">
@@ -160,41 +156,45 @@ const Manage = () => {
                       </span>
                     </div>
                     {tenant && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Check In:</span>
+                        <span>{tenant.createdAt}</span>
+                      </div>
+                    )}
+                    {tenant && (
                       <div className="flex justify-end space-x-2 mt-3">
-                            <button 
-                      className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
-                      
-                    >
-                      แก้ไข
-                    </button>
-                        
                         <button 
-                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm"
-                      onClick={() => {
-                        Swal.fire({
-                          title: 'ยืนยันการลบข้อมูล?',
-                          text: "คุณต้องการลบข้อมูลผู้เช่าใช่หรือไม่",
-                          icon: 'warning',
-                          showCancelButton: true,
-                          confirmButtonColor: '#3085d6', 
-                          cancelButtonColor: '#d33',
-                          confirmButtonText: 'ใช่, ลบข้อมูล',
-                          cancelButtonText: 'ยกเลิก'
-                        }).then((result) => {
-                          if (result.isConfirmed) {
-                            handleDelete(tenant._id);
-                            Swal.fire(
-                              'ลบข้อมูลสำเร็จ!',
-                              'ข้อมูลผู้เช่าถูกลบเรียบอยแล้ว',
-                              'success'
-                            )
-                          }
-                        })
-                      }}
-                    >
-                      ลบ
-                    </button>
-              
+                          className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+                          onClick={() => handleEdit(tenant)}
+                        >
+                          แก้ไข
+                        </button>
+                        <button 
+                          className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm"
+                          onClick={() => {
+                            Swal.fire({
+                              title: 'ยืนยันการลบข้อมูล?',
+                              text: "คุณต้องการลบข้อมูลผู้เช่าใช่หรือไม่",
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonColor: '#3085d6', 
+                              cancelButtonColor: '#d33',
+                              confirmButtonText: 'ใช่, ลบข้อมูล',
+                              cancelButtonText: 'ยกเลิก'
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                handleDelete(tenant._id);
+                                Swal.fire(
+                                  'ลบข้อมูลสำเร็จ!',
+                                  'ข้อมูลผู้เช่าถูกลบเรียบอยแล้ว',
+                                  'success'
+                                )
+                              }
+                            })
+                          }}
+                        >
+                          ลบ
+                        </button>
                       </div>
                     )}
                   </div>
@@ -283,7 +283,15 @@ const Manage = () => {
           <span>Add User</span>
         </button>
       </div>
-    </div>
+    <button 
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+      className="fixed bottom-5 left-0 bg-blue-500 text-white border-none rounded p-2 cursor-pointer z-50"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M10 17a1 1 0 01-1-1V5.414l-3.293 3.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0l5 5a1 1 0 01-1.414 1.414L11 5.414V16a1 1 0 01-1 1z" clipRule="evenodd" />
+      </svg>
+    </button>
+    </>
   );
 };
 

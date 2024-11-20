@@ -21,7 +21,7 @@ const Challenge = () => {
   const TOTAL_PAIRS = Math.floor((GRID_SIZE * GRID_SIZE) / 2);
   
   // State
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState(() => generateCards(GRID_SIZE, TOTAL_PAIRS));
   const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -31,14 +31,14 @@ const Challenge = () => {
   const [playerName, setPlayerName] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [gameStarted, setGameStarted] = useState(false);
-  const [timerStarted, setTimerStarted] = useState(false);
 
   useEffect(() => {
-    if (gameStarted && timerStarted) {
+    if (gameStarted && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
+            setGameOver(true);
             if (!gameOver && matched.length !== cards.length - 1) {
               Swal.fire({
                 title: 'เสียใจด้วย',
@@ -57,7 +57,7 @@ const Challenge = () => {
 
       return () => clearInterval(timer);
     }
-  }, [gameOver, gameStarted, timerStarted]);
+  }, [gameStarted, timeLeft, matched.length, cards.length, gameOver]);
 
   useEffect(() => {
     if (flipped.length === 2) {
@@ -65,7 +65,7 @@ const Challenge = () => {
       const [first, second] = flipped;
 
       if (cards[first].value === cards[second].value) {
-        setMatched([...matched, first, second]);
+        setMatched(prev => [...prev, first, second]);
         setFlipped([]);
         setIsLocked(false);
       } else {
@@ -76,16 +76,23 @@ const Challenge = () => {
       }
       setMoves(prev => prev + 1);
     }
-  }, [flipped, cards, matched]);
+  }, [flipped, cards]);
+
+  useEffect(() => {
+    if (matched.length === cards.length - 1) {
+      setGameOver(true);
+    }
+  }, [matched.length, cards.length]);
 
   const handleCardClick = (index) => {
-    if (!timerStarted) {
-      setTimerStarted(true);
-    }
-    if (!isLocked && !flipped.includes(index) && !matched.includes(index) && timeLeft > 0) {
-      if (flipped.length < 2) {
-        setFlipped([...flipped, index]);
-      }
+    if (
+      !isLocked && 
+      !flipped.includes(index) && 
+      !matched.includes(index) && 
+      timeLeft > 0 &&
+      !gameOver
+    ) {
+      setFlipped(prev => [...prev, index]);
     }
   };
 
@@ -97,9 +104,9 @@ const Challenge = () => {
     setTimeLeft(20);
     setGameOver(false);
     setGameStarted(false);
-    setTimerStarted(false);
     setPlayerName('');
     setRoomNumber('');
+    setIsLocked(false);
   };
 
   const handleStartGame = () => {
@@ -192,7 +199,7 @@ const Challenge = () => {
 
             {matched.length === cards.length - 1 && (
               <div className="mt-4 p-3 sm:p-4 bg-green-900 text-green-300 rounded-lg sm:rounded-xl text-center animate-pulse shadow-lg text-sm sm:text-base">
-                🎉 ยินดีด้วย! คุณ {playerName} ห้อง {roomNumber} ชนะแล้ว ด้วยการเล่น {moves} ครั้ง
+                🎉 ยินดีด้วย! คุณ {playerName} ห้อง {roomNumber} ชนะแล้ว ด้วยการเล่น {moves} ครั้ง ติดต่อadmin@wassawan.com เพื่อรับส่วนลดค่าห้อง
               </div>
             )}
           </>

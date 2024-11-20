@@ -7,14 +7,15 @@ import Mantanance from './pages/admin/Mantanance';
 import Home from './pages/admin/Home';
 import Challenge from './pages/admin/Challenge';
 import Manage from './pages/admin/Manage';
-
+import Usage from './pages/admin/Usage';
+import Views_usage from './pages/admin/Views_usage';
   function App() {
 
   return (
     <>
     
   <Header />
-
+ 
 
       <Routes>
      
@@ -22,7 +23,9 @@ import Manage from './pages/admin/Manage';
         <Route path='/overviews' element={<Overviews />} />
         <Route path='/mantanance' element={<Mantanance />} />
         <Route path='/challenge' element={<Challenge/>} />
+        <Route path='/usage' element={<Usage/>} />
         <Route path='/manage' element={<Manage/>} />
+        <Route path='/views_usage' element={<Views_usage/>} />
       </Routes>
     </>
   )
