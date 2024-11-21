@@ -9,7 +9,7 @@ const Overviews = () => {
 
   const fetchBillDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/summary`);
+      const response = await axios.get(`https://backend-wassawan2567.vercel.app/api/summary`);
       const billDetails = response.data.find(detail => detail.room === parseInt(selectedRoom)); // Ensure selectedRoom is an integer
       if (billDetails) {
         setUser({
@@ -48,7 +48,7 @@ const Overviews = () => {
 
   const handleSaveReceipt = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/bills', {
+      const response = await axios.post('https://backend-wassawan2567.vercel.app/api/bills', {
         room: user.room,
         name: user.name,
         rent: user.rent,

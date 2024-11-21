@@ -7,12 +7,9 @@ const Manage = () => {
 
   const fetchTenants = async () => {
     try {
-      // const response = await fetch("https://backend-wassawan.onrender.com/");
-      //ดึงข้อมูลจากusers
       const response = await fetch("http://localhost:5000");
       const data = await response.json();
       setTenants(data);
-
     } catch (error) {
       console.error("Error fetching tenants:", error);
     }
@@ -21,8 +18,6 @@ const Manage = () => {
   useEffect(() => {
     fetchTenants();
   }, []);
-
-
 
   const handleDelete = async (id) => {
     try {
@@ -34,6 +29,52 @@ const Manage = () => {
       }
     } catch (error) {
       console.error("Error deleting tenant:", error);
+    }
+  };
+
+  const handleEdit = async (tenant) => {
+    const { value: formValues } = await Swal.fire({
+      title: 'แก้ไขข้อมูลผู้เช่า',
+      html: `
+        <input id="name" class="swal2-input" placeholder="ชื่อ-นามสกุล" value="${tenant.name}">
+        <input id="room" class="swal2-input" placeholder="เลขห้อง" type="number" value="${tenant.room}">
+        <input id="rent" class="swal2-input" placeholder="ค่าเช่า" type="number" value="${tenant.rent}">
+        <input id="tel" class="swal2-input" placeholder="เบอร์โทร" type="text" value="${tenant.tel}">
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึก',
+      cancelButtonText: 'ยกเลิก',
+      preConfirm: () => {
+        const name = document.getElementById('name').value;
+        const room = document.getElementById('room').value;
+        const rent = document.getElementById('rent').value;
+        const tel = document.getElementById('tel').value;
+        if (!name || !room || !rent || !tel) {
+          Swal.showValidationMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+          return false;
+        }
+        return { name, room, rent, tel };
+      }
+    });
+
+    if (formValues) {
+      try {
+        const response = await fetch(`https://backend-wassawan2567.vercel.app/${tenant._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formValues)
+        });
+        if (response.ok) {
+          Swal.fire('สำเร็จ!', 'ข้อมูลผู้เช่าได้รับการอัปเดตเรียบร้อยแล้ว', 'success');
+          fetchTenants(); // Refresh data
+        } else {
+          Swal.fire('ผิดพลาด!', 'ไม่สามารถอัปเดตข้อมูลได้', 'error');
+        }
+      } catch (error) {
+        console.error("Error updating tenant:", error);
+      }
     }
   };
 
@@ -123,6 +164,7 @@ const Manage = () => {
                       <div className="flex justify-end space-x-2 mt-3">
                         <button 
                           className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+                          onClick={() => handleEdit(tenant)}
                         >
                           แก้ไข
                         </button>
