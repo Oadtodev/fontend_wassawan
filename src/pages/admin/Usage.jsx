@@ -38,7 +38,7 @@ const Usage = () => {
 
     try {
       // Send data to the database using axios
-      await axios.post('backend-wassawan2567.vercel.app/api/utilities_usage', {
+      await axios.post('http://localhost:5000/api/utilities_usage', {
         room: selectedRoom,
         newWaterMeter: newWaterMeter,
         newElectricMeter: newElectricMeter

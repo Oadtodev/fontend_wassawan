@@ -59,7 +59,7 @@ const Manage = () => {
 
     if (formValues) {
       try {
-        const response = await fetch(`backend-wassawan2567.vercel.app/${tenant._id}`, {
+        const response = await fetch(`http://localhost:5000/api/users/${tenant._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
