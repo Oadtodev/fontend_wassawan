@@ -15,7 +15,7 @@
 
       const fetchUsageData = async (room) => {
         try {
-          const response = await axios.get(`https://backend-wassawan2567.vercel.app/${room}`);
+          const response = await axios.get(`backend-wassawan2567.vercel.app/${room}`);
           setUsageData(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); // Sort by createdAt descending
         } catch (error) {
           console.error('Error fetching usage data:', error);

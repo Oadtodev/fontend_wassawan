@@ -48,7 +48,7 @@ const Overviews = () => {
 
   const handleSaveReceipt = async () => {
     try {
-      const response = await axios.post('https://backend-wassawan2567.vercel.app/api/bills', {
+      const response = await axios.post('backend-wassawan2567.vercel.app/api/bills', {
         room: user.room,
         name: user.name,
         rent: user.rent,
