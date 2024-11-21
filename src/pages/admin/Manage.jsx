@@ -7,7 +7,7 @@ const Manage = () => {
 
   const fetchTenants = async () => {
     try {
-      const response = await fetch("backend-wassawan2567.vercel.app");
+      const response = await fetch("http://backend-wassawan2567.vercel.app");
       const data = await response.json();
       setTenants(data);
     } catch (error) {
@@ -21,7 +21,7 @@ const Manage = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`backend-wassawan2567.vercel.app/${id}`, {
+      const response = await fetch(`http://backend-wassawan2567.vercel.app/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -59,7 +59,7 @@ const Manage = () => {
 
     if (formValues) {
       try {
-        const response = await fetch(`backend-wassawan2567.vercel.app/api/users/${tenant._id}`, {
+        const response = await fetch(`http://backend-wassawan2567.vercel.app/${tenant._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
