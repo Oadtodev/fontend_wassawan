@@ -60,7 +60,7 @@ const Home = () => {
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition">
               <img src="https://image-thaihometown.com/content/tp3596_files/ploais06.jpg" alt="Apartment 2" className="w-full h-48 object-cover rounded-lg" />
               <h3 className="text-xl font-semibold mt-4 text-gray-800">Downtown Loft</h3>
-              <p className="text-gray-500">New York,+++++71NY</p>
+              <p className="text-gray-500">New York,+++++81NY</p>
               <p className="text-lg font-bold mt-2 text-gray-800">$2,000/month</p>
               <a href="#details" className="text-gray-600 mt-4 inline-block hover:text-gray-800">View Details</a>
             </div>
